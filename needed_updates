@@ -1,0 +1,10 @@
+Add comments
+Make sure naming is consistent
+Get rid of star import
+Ensure logic in valid.
+
+Attempt to reduce used memory.
+Attempt to reduce runtime.
+
+Define cut in the beginning of the file.
+Use cut to select how much of the data is used.
