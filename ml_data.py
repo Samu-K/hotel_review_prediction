@@ -122,7 +122,7 @@ word_score_series.to_csv("D:/Coding/Rating analysis/data/word_score_series.csv")
 ########
 """
 This file creates the following files (of importance)
-word_score_series_train_copy (contains ratings for words)
+word_score_series (contains ratings for words)
 full_data (contains the original full data)
 targets (contains the target values)
 train_c (contains the modified data w/ unique_words)
