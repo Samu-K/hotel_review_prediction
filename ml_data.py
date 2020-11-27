@@ -6,11 +6,10 @@ Created on Sun Nov 22 13:11:07 2020
 """
 
 #Import in the needed funcs from functions.py
-from functions import word_scorer, text_cleaner, unique_words, average_rating, unrated_value_drop, 
+from functions import word_scorer, text_cleaner, unique_words, average_rating, unrated_value_drop 
 
 #We import these for data handling
 import pandas as pd
-import numpy as np
 
 #Import sklearn for splitting data
 from sklearn.model_selection import train_test_split
@@ -55,7 +54,7 @@ for indx in X_train.index:
 #We first take the word_score dict and turn it into a pandas series
 #Then we apply the average_rating function to get the avg rating for each word
 #Then we drop Na values from it and finally sort it 
-word_score_series = pd.Series(word_score_train).apply(average_rating).dropna().sort_values(ascending=False)
+word_score_series = pd.Series(word_score).apply(average_rating).dropna().sort_values(ascending=False)
 
 #Loop through all values and drop ones inbetween 2.4 and 4
 for word, rating in word_score_series.items():
