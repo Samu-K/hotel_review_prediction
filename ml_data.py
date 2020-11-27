@@ -15,6 +15,9 @@ import numpy as np
 #Import sklearn for splitting data
 from sklearn.model_selection import train_test_split
 
+#We use this to set how much of the data we keep in
+cut = 2000
+
 #Get data and split targets from it
 fp = "D:/Coding/Rating analysis/data/tripadvisor_hotel_reviews.csv"
 full_data = pd.read_csv(fp)
@@ -78,8 +81,8 @@ for index in X_val.index:
     X_val.loc[index, "unique_words"] = new_words
 
 #Cut our data down, see Issues for more detail
-cut_data_train = X_train[:2000]
-cut_data_val = X_val[:2000]
+cut_data_train = X_train[:cut]
+cut_data_val = X_val[:cut]
 
 #Encode the categorical variables into numerical with dummies.
 #We first turn the unique_words into a series, 
@@ -88,17 +91,22 @@ dummies_train = pd.get_dummies(cut_data_train.unique_words.apply(pd.Series).stac
 dummies_val = pd.get_dummies(cut_data_val.unique_words.apply(pd.Series).stack()).sum(level=0)
 
 #We get rid of any words in the validation data that isn't in the training data
+#This avoids mismatched feature names
 for column_name in dummies_val.columns:
     if column_name not in dummies_train.columns:
         dummies_val.drop(column_name,axis=1)
 
+#We set the columns to be in the same order
 dummies_val = dummies_val.reindex(dummies_train.columns,axis=1)
 
+#We use dummies for ML, but we want to export original for manual
 X_train_ml = dummies_train
 X_val_ml = dummies_val
-y_train_ml = y_train[:2000]
-y_val_ml = y_val[:2000]
+#Split targets to have the same amount of values
+y_train_ml = y_train[:cut]
+y_val_ml = y_val[:cut]
 
+#Export our data out
 X_train_ml.to_csv("D:/Coding/Rating analysis/data/X_train.csv")
 X_val_ml.to_csv("D:/Coding/Rating analysis/data/X_val.csv")
 y_train_ml.to_csv("D:/Coding/Rating analysis/data/y_train.csv")
@@ -109,7 +117,7 @@ X_val.to_csv("D:/Coding/Rating analysis/data/X_val_manual.csv")
 y_train.to_csv("D:/Coding/Rating analysis/data/y_train_manual.csv")
 y_val.to_csv("D:/Coding/Rating analysis/data/y_val_manual.csv")
 
-word_score_series_train_copy.to_csv("D:/Coding/Rating analysis/data/word_score_series_train_copy.csv")
+word_score_series.to_csv("D:/Coding/Rating analysis/data/word_score_series.csv")
 
 ########
 """
