@@ -5,24 +5,23 @@ Created on Sun Nov 22 13:23:15 2020
 @author: Samu
 """
 #For text handling
+#We import these so we can define the functions here
 import regex as re
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-#Make temp to allow function settings
+#We need temp variables to define functions
 word_score_series_copy = ""
 word_score = {}
-
-#We'll make a few functions to make code cleaner
 
 def text_cleaner(text):
     """
     Cleans up text paragraphs.
     Takes ous dots and commas.
     Replaces won't with will not, isn't with is not and didn't with did not
-    Takes out any numbers or non-writing characters
+    Takes out any numbers,underlines or non-writing characters
     """
     text = text.lower()
     text = re.sub('\.',' ',text)
@@ -39,8 +38,10 @@ def text_cleaner(text):
 
 def unique_words(text):
     """
-    Take the unique words in a text paragraph.
+    Takes the unique words in a text paragraph.
+    returns them in a numpy array
     """
+    #Split the review into words
     all_words = text.split()
     
     #Take out words that are less than 2 characters
@@ -54,6 +55,7 @@ def unique_words(text):
 def unique_word_count(text,unique_words,all_words=""):
     """
     The the amount of times a word shows up in a text paragraph.
+    Returns a float
     """
     
     word_count = {}
@@ -85,8 +87,8 @@ def unique_word_count(text,unique_words,all_words=""):
         
 def word_scorer(df,target_series,index):
     """
-    Loop through the index of the supplied dataframe,
-    and apply the target value for each word
+    Fetches the words and rating for a given index.
+    Returns both
     """
     words = df.unique_words[index]
     rating = target_series[index]
@@ -95,10 +97,13 @@ def word_scorer(df,target_series,index):
     
 def average_rating(x,min_len=1000):
     """
-    Takes a list. and returns the average if the length is more than min_len.
-    It neither match, it returns na
+    Takes a list and returns the average of the values,
+    if the length is more than min_len.
+    It no match, it returns na
     """
+    #Get then lenght of the list
     l = len(x)
+    #Average value for the list
     avg = np.average(x)
     if l > min_len:
         return(avg)
@@ -108,7 +113,15 @@ def average_rating(x,min_len=1000):
 def review_predictor(word_values,words,word_count):
     """
     Predict the rating of the review based on the words given
+    First we get the words that show up in the review.
+    Then we use the values we've assigned to those words.
+    We append the rating to total_ratings,
+    proportional to the amount of times the word shows up.
+    
+    Then the final prediction is the average value for the total_ratings list.
+    Returns a float
     """
+    
     total_ratings = []
     #Go through every word in the review
     for word in words:
@@ -135,32 +148,49 @@ def review_predictor(word_values,words,word_count):
         else:
             total_ratings.append(float(word_rating))
     
-    #Get the average rating
+    #If total_ratings is empty we return Na
+    #This might happen for reviews with no scored words, or due to a bug
     if len(total_ratings) == 0:
         return None
     else:
+        #Get the average value for the list
         pred = sum(total_ratings) / len(total_ratings)
         return pred
 
 def predict(text,word_values):
     """
-    Combine variable creating, and prediction
+    Combines variable creating, and prediction
+    We clean the text, get unique words and count the times those show up.
+    Then pass that info to review_predictor
     """
-    #values assigned to each word
+    #Clean the text
     text_clean = text_cleaner(text)
+    #Get the unique words
     words = unique_words(text_clean)
+    #Count the times they show up in the text
     word_count = unique_word_count(text_clean,words)
     
+    #Get prediction using manual prediction function
     pred = review_predictor(word_values,words,word_count)
+    
     return pred
 
-def unrated_value_drop(data,word_scores):
-    word_list = data
+def unrated_value_drop(words,word_scores):
+    """
+    Drops words that haven't been rated.
+    Returns a list of the rated_words
+    """
+    word_list = words
+    
     for word in word_list:
-        
+        #If the word isn't in word_score, we haven't scored it
         if word not in word_scores:
+            #It not  scored
+            #Remove the word from the list
             word_list.remove(word)
         else:
+            #If scored
+            #Keep the word in the list
             pass
     
     return word_list
