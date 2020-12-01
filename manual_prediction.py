@@ -5,9 +5,11 @@ Created on Sun Nov 22 14:48:21 2020
 @author: Samu
 """
 #First let's import in the data we need
-from functions import text_cleaner, unique_word_count,review_predictor,predict
+from functions import predict
 #We need ast to turn the unique_words into a list when reading
 import ast
+import pandas as pd
+import numpy as np
 
 #File names for the data we need
 needed_data = ["X_train_manual","X_val_manual","y_train_manual","y_val_manual","word_score_series"]
@@ -15,7 +17,7 @@ filepaths = []
 
 for data in needed_data:
     #All files should be stored in this folder in csv format
-    fp = "D:/Coding/Rating analysis/data/" + data + ".csv"
+    fp = "D:/Coding/Rating analysis/ver_1_0/data/" + data + ".csv"
     filepaths.append(fp)
  
 #Read in our data
@@ -32,7 +34,7 @@ for index in X_val.index:
     #Get the text for the review
     review = X_val.Review[index]
     #Predict the rating
-    pred = prediction(review,word_score_series)
+    pred = predict(review,word_score_series)
     #Save the prediction into the preds dict,by index
     preds[index] = pred
 
@@ -56,7 +58,7 @@ print("The average error is:" + str(avg_error))
 
 #We use a review from a different source to test our prediction.
 text = "Comfy Bed, very clean large room ideally situated for a short break or a longer stay.  Joanne and John manage the property extremely well and they have a fantastic group of friendly staff.  We have stayed here a number of times and it feels like coming home when we visit.  Excellent value for money.  The restaurant has a limited menu but the food is excellent reasonably priced with large portions.  Breakfast is great value."
-pred = predict(text,word_values=word_score_series_train_copy)
+pred = predict(text,word_values=word_score_series)
 print("Prediction for the review is :" + str(pred))
 
 #The original rating was 4/5, so our manual prediction landed close
