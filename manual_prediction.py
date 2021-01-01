@@ -12,7 +12,7 @@ import pandas as pd
 import numpy as np
 
 #File names for the data we need
-needed_data = ["X_train_manual","X_val_manual","y_train_manual","y_val_manual","word_score_series"]
+needed_data = ["X_train","X_val","y_train","y_val","word_score_series"]
 filepaths = []
 
 for data in needed_data:
